@@ -5,3 +5,4 @@ tool based task
 Malware analysis
 Threat intelligence
 Check Homograph
+Stenographic File Integrity Checker 
