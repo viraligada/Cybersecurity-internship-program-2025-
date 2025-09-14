@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dynamic PIN Authentication</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: monospace;
+    }
+    .notepad {
+      background: #f3f4f6;
+      border: 2px solid #374151;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      padding: 20px;
+      max-width: 320px;
+      width: 100%;
+      position: relative;
+    }
+    .notepad::before {
+      content: "";
+      position: absolute;
+      top: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 6px;
+      background: #ef4444;
+      border-radius: 10px;
+    }
+    .display {
+      background: white;
+      border: 1px solid #d1d5db;
+      padding: 15px;
+      font-size: 24px;
+      text-align: center;
+      margin-bottom: 20px;
+      min-height: 40px;
+      overflow: hidden;
+    }
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    button {
+      background: white;
+      border: 1px solid #d1d5db;
+      font-size: 20px;
+      font-weight: bold;
+      padding: 15px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #e5e7eb;
+    }
+    .extra-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    .extra-buttons button {
+      flex: 1;
+      margin: 0 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="notepad">
+    <h1 class="text-center text-xl mb-4 font-bold text-gray-800">PIN Unlock</h1>
+    <div class="display" id="pinDisplay"></div>
+    <div class="keypad" id="keypad"></div>
+    <div class="extra-buttons">
+      <button id="backspace">⏎</button>
+      <button id="clear">✂</button>
+    </div>
+  </div>
+
+  <script>
+    const correctPin = "1234"; // The correct PIN
+    let enteredPin = "";
+    const pinDisplay = document.getElementById("pinDisplay");
+    const keypadContainer = document.getElementById("keypad");
+    const backspaceBtn = document.getElementById("backspace");
+    const clearBtn = document.getElementById("clear");
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function createShuffledKeypad() {
+      keypadContainer.innerHTML = "";
+      const digits = Array.from({ length: 10 }, (_, i) => i);
+      shuffleArray(digits);
+
+      digits.forEach((digit) => {
+        const btn = document.createElement("button");
+        btn.textContent = digit;
+        btn.addEventListener("click", () => {
+          enteredPin += digit;
+          updateDisplay();
+          if (enteredPin.length === correctPin.length) {
+            checkPin();
+          }
+        });
+        keypadContainer.appendChild(btn);
+      });
+    }
+
+    function updateDisplay() {
+      pinDisplay.textContent = "•".repeat(enteredPin.length);
+    }
+
+    function checkPin() {
+      if (enteredPin === correctPin) {
+        alert("Password was correct");
+        reset();
+      } else {
+        alert("Password is invalid");
+        reset();
+      }
+    }
+
+    function reset() {
+      enteredPin = "";
+      updateDisplay();
+      createShuffledKeypad();
+    }
+
+    backspaceBtn.addEventListener("click", () => {
+      enteredPin = enteredPin.slice(0, -1);
+      updateDisplay();
+    });
+
+    clearBtn.addEventListener("click", () => {
+      reset();
+    });
+
+    // Initialize keypad on page load
+    createShuffledKeypad();
+  </script>
+</body>
+</html>
